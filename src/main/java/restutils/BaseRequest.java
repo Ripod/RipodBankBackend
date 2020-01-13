@@ -1,4 +1,4 @@
-package processing;
+package restutils;
 
 public class BaseRequest {
 }
