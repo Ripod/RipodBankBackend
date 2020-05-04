@@ -1,15 +1,18 @@
 package restutils.responses;
 
+import dbinteraction.Account;
+
+import java.util.List;
 import java.util.Map;
 
 public class BalanceResponse extends BaseResponse{
-    public Map<String, Float> accounts;
+    public List<Account> accounts;
 
-    public Map<String, Float> getAccounts() {
+    public List<Account> getAccounts() {
         return accounts;
     }
 
-    public BalanceResponse (int code, String message, Map<String, Float> accounts){
+    public BalanceResponse (int code, String message, List<Account> accounts){
         super(code, message);
         this.accounts = accounts;
     }

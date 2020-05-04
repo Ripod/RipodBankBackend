@@ -11,29 +11,60 @@ import java.util.List;
 import java.util.Map;
 
 public class Client {
+    public String getLogin() {
+        return login;
+    }
+
     private String login;
     private String firstName;
     private String secondName;
     private String parentalName;
     private List<Account> accountList = new ArrayList<>();
-    private boolean isAuthorized = false;
-    String token;
-    LocalDateTime tokenValidUntil;
+    private boolean isAuthorized;
+    private String token;
+    private LocalDateTime tokenValidUntil;
+
+    public Client(String login, boolean isAuthorized) {
+        this.login = login;
+        this.isAuthorized = isAuthorized;
+        tokenValidUntil = LocalDateTime.now();
+        System.out.println("client created login: " + login);
+    }
 
     public void authorize(String password, Date time) {
     }
 
-    public void requestAccountList() {
+    public List<Account> requestAccountList() {
+        //BD request
+        accountList.clear();
+        accountList.add(new Account("11111111111111111111" + login, 1000.10f));
+        accountList.add(new Account("22222222222222222222" + login, 2000.20f));
+        return accountList;
     }
 
-    public String generateToken() {
+    public String getToken() {
+        System.out.println("get token");
+        LocalDateTime checkTime = LocalDateTime.now();
+        if (checkTime.isAfter(tokenValidUntil)) {
+            System.out.println("check time failed" + tokenValidUntil.toString() + "  " + checkTime.toString());
+            generateToken();
+        }
+        System.out.println("returned token: " + this.token + "valid until: " + tokenValidUntil.toString());
+        return this.token;
+    }
 
+    private void generateToken() {
         LocalDateTime currentTime = LocalDateTime.now();
         int salt = (int) (Math.random() * 1000);
-        String initialString = login + currentTime.toString() + Integer.toString(salt);
-        String generatedToken = DigestUtils.md5DigestAsHex(initialString.getBytes());
-        this.token = generatedToken;
+        String initialString = login + currentTime.toString() + salt;
+        this.token = DigestUtils.md5DigestAsHex(initialString.getBytes());
         tokenValidUntil = currentTime.plusMinutes(15);
-        return generatedToken;
     }
+
+    public boolean validateToken(String incomingToken) {
+        String checkToken = getToken();
+        System.out.println("validating token: " + incomingToken + "check token: " + checkToken);
+        return incomingToken.equals(checkToken);
+    }
+
 }
